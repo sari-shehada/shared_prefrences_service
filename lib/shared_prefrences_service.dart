@@ -179,9 +179,9 @@ class SharedPreferencesService {
       }
       bool clearingRes = await _plugin.remove(key.toString());
       if (clearingRes) {
-        log('SharedPreferencesService -> clearValue() -> Clear Shared Preferences Succeeded');
+        log('SharedPreferencesService -> clearValue() -> Command Succeeded');
       } else {
-        log('SharedPreferencesService -> clearValue() -> Clear Shared Preferences Failed With An Exception');
+        log('SharedPreferencesService -> clearValue() -> Command Failed (Perhaps the key does not exist in the first place)');
       }
       return clearingRes;
     } catch (e) {

@@ -114,6 +114,37 @@ void main() async {
       expect(result, null);
     });
   });
+  group('Clear Value Tests', () {
+    test('clearValue should handle clearing a value', () async {
+      final bool boolValue = true;
+      await instance.setValue(
+          key: TestKeyEnum.clearValueTestKey, value: boolValue);
+      final result =
+          await instance.clearValue(key: TestKeyEnum.clearValueTestKey);
+
+      expect(result, true);
+    });
+    test('clearValue should return false when key doesn\'t exist', () async {
+      final result =
+          await instance.clearValue(key: TestKeyEnum.clearValueTestKey);
+
+      expect(result, false);
+    });
+  });
+  group('Clear All Values Tests', () {
+    setUpAll(() async {
+      await instance.setValue(key: TestKeyEnum.getBoolKey, value: false);
+      await instance.setValue(key: TestKeyEnum.getIntKey, value: 10);
+      await instance.setValue(key: TestKeyEnum.getDoubleKey, value: 3.14);
+    });
+    test('clearAll should clear all keys', () async {
+      final result = await instance.clearAll();
+
+      expect(result, true);
+    });
+  });
+
+  //TODO: Add keyExists tests
 }
 
 enum TestKeyEnum {
@@ -124,4 +155,5 @@ enum TestKeyEnum {
   getDoubleKey,
   getStringListKey,
   noValueKey,
+  clearValueTestKey,
 }
