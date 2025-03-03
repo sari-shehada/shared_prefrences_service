@@ -1,6 +1,6 @@
 name: shared_prefrences_service
 description: "A dart package for handling interaction with SharedPreferences Package"
-version: 0.2.0
+version: 0.2.1
 homepage:
 
 environment:
