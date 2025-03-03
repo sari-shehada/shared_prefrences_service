@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
 import 'package:shared_prefrences_service/exceptions/invalid_data_type_exception.dart';
 import 'package:shared_prefrences_service/models/shared_preferences_service_settings.dart';
+import 'package:shared_prefrences_service/usecases/set_value.dart';
 
 //TODO: Add tests
 //TODO: Enable to ability to toggle logging feature
@@ -71,24 +72,20 @@ class SharedPreferencesService {
   ///
   ///Throws `InvalidDataTypeException` on non-supported types
   Future<bool> setValue<T>({required Enum key, required T value}) async {
+    return await _exceptionHanldingWrapper(function: () async {
+      return await SetValue(
+        plugin: _plugin,
+        params: SetValueParams(key: key, value: value),
+      ).call();
+    });
+  }
+
+  //TODO: Document
+  ReturnType _exceptionHanldingWrapper<ReturnType>({
+    required ReturnType Function() function,
+  }) {
     try {
-      if (value is bool) {
-        return await _plugin.setBool(key.toString(), value);
-      }
-      if (value is String) {
-        return await _plugin.setString(key.toString(), value);
-      }
-      if (value is int) {
-        return await _plugin.setInt(key.toString(), value);
-      }
-      if (value is double) {
-        return await _plugin.setDouble(key.toString(), value);
-      }
-      if (value is List<String>) {
-        return await _plugin.setStringList(key.toString(), value);
-      }
-      throw InvalidDataTypeException(
-          operationMode: SharedPrefsOperationMode.write);
+      return function();
     } on InvalidDataTypeException catch (e) {
       _log(e.message);
       rethrow;
