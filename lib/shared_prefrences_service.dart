@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
 import 'package:shared_prefrences_service/exceptions/invalid_data_type_exception.dart';
 import 'package:shared_prefrences_service/models/shared_preferences_service_settings.dart';
+import 'package:shared_prefrences_service/usecases/get_value.dart';
 import 'package:shared_prefrences_service/usecases/set_value.dart';
 
 //TODO: Add tests
@@ -119,34 +120,9 @@ class SharedPreferencesService {
 
   //TODO: Continue documenting
   T? getValue<T>({required Enum key}) {
-    try {
-      if (T == bool) {
-        return _plugin.getBool(key.toString()) as T?;
-      }
-      if (T == String) {
-        return _plugin.getString(key.toString()) as T?;
-      }
-      if (T == int) {
-        return _plugin.getInt(key.toString()) as T?;
-      }
-      if (T == double) {
-        return _plugin.getDouble(key.toString()) as T?;
-      }
-      if (T == List<String>) {
-        return _plugin.getStringList(key.toString()) as T?;
-      }
-      throw InvalidDataTypeException(
-          operationMode: SharedPrefsOperationMode.read);
-    } on InvalidDataTypeException catch (e) {
-      _log(e.message);
-      rethrow;
-    } catch (e) {
-      _logUnknownException(
-        operationMode: SharedPrefsOperationMode.read,
-        originalExceptionMessage: e.toString(),
-      );
-      rethrow;
-    }
+    return _exceptionHanldingWrapper(function: () {
+      return GetValue(plugin: _plugin).call(key: key);
+    });
   }
 
   Future<bool> clearAll() async {
