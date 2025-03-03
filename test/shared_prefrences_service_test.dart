@@ -143,6 +143,21 @@ void main() async {
       expect(result, true);
     });
   });
+  group('Key Exists Tests', () {
+    setUpAll(() async {
+      await instance.setValue(key: TestKeyEnum.getBoolKey, value: false);
+    });
+    test('should return true for a key that exists', () async {
+      final result = instance.keyExists(key: TestKeyEnum.getBoolKey);
+
+      expect(result, true);
+    });
+    test('should return false for a key that does not exist', () async {
+      final result = instance.keyExists(key: TestKeyEnum.getIntKey);
+
+      expect(result, false);
+    });
+  });
 
   //TODO: Add keyExists tests
 }
