@@ -121,8 +121,10 @@ void main() async {
           key: TestKeyEnum.clearValueTestKey, value: boolValue);
       final result =
           await instance.clearValue(key: TestKeyEnum.clearValueTestKey);
-
+      final newValue =
+          instance.getValue<bool>(key: TestKeyEnum.clearValueTestKey);
       expect(result, true);
+      expect(newValue, null);
     });
     test('clearValue should return false when key doesn\'t exist', () async {
       final result =
