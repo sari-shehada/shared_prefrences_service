@@ -73,16 +73,19 @@ class SharedPreferencesService {
   ///
   ///Throws `InvalidDataTypeException` on non-supported types
   Future<bool> setValue<T>({required Enum key, required T value}) async {
-    return await _exceptionHanldingWrapper(function: () async {
-      return await SetValue(
-        plugin: _plugin,
-        params: SetValueParams(key: key, value: value),
-      ).call();
-    });
+    return await _exceptionHanldingWrapper(
+        operationMode: SharedPrefsOperationMode.write,
+        function: () async {
+          return await SetValue(
+            plugin: _plugin,
+            params: SetValueParams(key: key, value: value),
+          ).call();
+        });
   }
 
   //TODO: Document
   ReturnType _exceptionHanldingWrapper<ReturnType>({
+    required SharedPrefsOperationMode operationMode,
     required ReturnType Function() function,
   }) {
     try {
@@ -92,7 +95,7 @@ class SharedPreferencesService {
       rethrow;
     } catch (e) {
       _logUnknownException(
-        operationMode: SharedPrefsOperationMode.write,
+        operationMode: operationMode,
         originalExceptionMessage: e.toString(),
       );
       rethrow;
@@ -120,9 +123,12 @@ class SharedPreferencesService {
 
   //TODO: Continue documenting
   T? getValue<T>({required Enum key}) {
-    return _exceptionHanldingWrapper(function: () {
-      return GetValue(plugin: _plugin).call(key: key);
-    });
+    return _exceptionHanldingWrapper(
+      operationMode: SharedPrefsOperationMode.read,
+      function: () {
+        return GetValue(plugin: _plugin).call(key: key);
+      },
+    );
   }
 
   Future<bool> clearAll() async {
@@ -148,7 +154,7 @@ class SharedPreferencesService {
   Future<bool> clearValue({required Enum key}) async {
     try {
       if (!keyExists(key: key)) {
-        throw Exception('Cannot Clear A Non Existing Key: "${key.toString()}"');
+        return false;
       }
       bool clearingRes = await _plugin.remove(key.toString());
       if (clearingRes) {
@@ -159,7 +165,7 @@ class SharedPreferencesService {
       return clearingRes;
     } catch (e) {
       log('SharedPreferencesService -> clearValue() -> Clear Shared Preferences Failed With An Exception');
-      return false;
+      rethrow;
     }
   }
 
