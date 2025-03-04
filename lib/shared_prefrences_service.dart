@@ -4,6 +4,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
 import 'package:shared_prefrences_service/exceptions/invalid_data_type_exception.dart';
 import 'package:shared_prefrences_service/models/shared_preferences_service_settings.dart';
+import 'package:shared_prefrences_service/usecases/clear_all.dart';
 import 'package:shared_prefrences_service/usecases/clear_value.dart';
 import 'package:shared_prefrences_service/usecases/get_value.dart';
 import 'package:shared_prefrences_service/usecases/logger.dart';
@@ -110,21 +111,12 @@ class SharedPreferencesService {
   }
 
   Future<bool> clearAll() async {
-    Logger logger = Logger(operationMode: SharedPrefsOperationMode.clearAll);
-    try {
-      bool clearingRes = await _plugin.clear();
-      if (clearingRes) {
-        logger.log(
-            'SharedPreferencesService -> clearAll() -> Clear Shared Preferences Succeeded');
-      } else {
-        logger.log(
-            'SharedPreferencesService -> clearAll() -> Clear Shared Preferences Failed With An Exception');
-      }
-      return clearingRes;
-    } catch (e) {
-      logger.logUnknown(e.toString());
-      rethrow;
-    }
+    return await _exceptionHanldingWrapper(
+      operationMode: SharedPrefsOperationMode.clearAll,
+      function: (logger) async {
+        return await ClearAll(logger: logger, plugin: _plugin).call();
+      },
+    );
   }
 
   Future<bool> clearValue({required Enum key}) async {
