@@ -82,23 +82,6 @@ class SharedPreferencesService {
         });
   }
 
-  //TODO: Document
-  ReturnType _exceptionHanldingWrapper<ReturnType>({
-    required SharedPrefsOperationMode operationMode,
-    required ReturnType Function(Logger logger) function,
-  }) {
-    final logger = Logger(operationMode: operationMode);
-    try {
-      return function(logger);
-    } on InvalidDataTypeException catch (e) {
-      logger.log(e.message);
-      rethrow;
-    } catch (e) {
-      logger.logUnknown(e.toString());
-      rethrow;
-    }
-  }
-
   //TODO: Continue documenting
   T? getValue<T>({required Enum key}) {
     return _exceptionHanldingWrapper(
@@ -133,5 +116,22 @@ class SharedPreferencesService {
         return KeyExists(plugin: _plugin).call(key: key);
       },
     );
+  }
+
+  //TODO: Document
+  ReturnType _exceptionHanldingWrapper<ReturnType>({
+    required SharedPrefsOperationMode operationMode,
+    required ReturnType Function(Logger logger) function,
+  }) {
+    final logger = Logger(operationMode: operationMode);
+    try {
+      return function(logger);
+    } on InvalidDataTypeException catch (e) {
+      logger.log(e.message);
+      rethrow;
+    } catch (e) {
+      logger.logUnknown(e.toString());
+      rethrow;
+    }
   }
 }
