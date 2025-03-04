@@ -4,12 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
 import 'package:shared_prefrences_service/exceptions/invalid_data_type_exception.dart';
 import 'package:shared_prefrences_service/models/shared_preferences_service_settings.dart';
+import 'package:shared_prefrences_service/usecases/clear_value.dart';
 import 'package:shared_prefrences_service/usecases/get_value.dart';
+import 'package:shared_prefrences_service/usecases/logger.dart';
 import 'package:shared_prefrences_service/usecases/set_value.dart';
 
-//TODO: Add tests
-//TODO: Enable to ability to toggle logging feature
-//TODO: Try to refactor
 class SharedPreferencesService {
   ///Main & only singleton constructor
   SharedPreferencesService({
@@ -75,7 +74,7 @@ class SharedPreferencesService {
   Future<bool> setValue<T>({required Enum key, required T value}) async {
     return await _exceptionHanldingWrapper(
         operationMode: SharedPrefsOperationMode.write,
-        function: () async {
+        function: (logger) async {
           return await SetValue(
             plugin: _plugin,
             params: SetValueParams(key: key, value: value),
@@ -86,87 +85,54 @@ class SharedPreferencesService {
   //TODO: Document
   ReturnType _exceptionHanldingWrapper<ReturnType>({
     required SharedPrefsOperationMode operationMode,
-    required ReturnType Function() function,
+    required ReturnType Function(Logger logger) function,
   }) {
+    final logger = Logger(operationMode: operationMode);
     try {
-      return function();
+      return function(logger);
     } on InvalidDataTypeException catch (e) {
-      _log(e.message);
+      logger.log(e.message);
       rethrow;
     } catch (e) {
-      _logUnknownException(
-        operationMode: operationMode,
-        originalExceptionMessage: e.toString(),
-      );
+      logger.logUnknown(e.toString());
       rethrow;
     }
-  }
-
-  ///Used to log error messages to the debug console if logging is enabled for the package
-  ///in the `settings` property of the `init` function
-  void _log(String message) {
-    if (settings.shouldEnableLoggingInDevelopment) {
-      log(message);
-    }
-  }
-
-  ///Used to log unknown exceptions that may be thrown by the inner plugin if logging in enabled
-  void _logUnknownException({
-    required SharedPrefsOperationMode operationMode,
-    required String originalExceptionMessage,
-  }) {
-    _log(
-      '''Unknown Exception Occurred When Calling SharedPreferencesService -> ${operationMode.operationModeAsString}
-        Original Exception Message: $originalExceptionMessage''',
-    );
   }
 
   //TODO: Continue documenting
   T? getValue<T>({required Enum key}) {
     return _exceptionHanldingWrapper(
       operationMode: SharedPrefsOperationMode.read,
-      function: () {
+      function: (logger) {
         return GetValue(plugin: _plugin).call(key: key);
       },
     );
   }
 
   Future<bool> clearAll() async {
+    Logger logger = Logger(operationMode: SharedPrefsOperationMode.clearAll);
     try {
       bool clearingRes = await _plugin.clear();
       if (clearingRes) {
-        _log(
+        logger.log(
             'SharedPreferencesService -> clearAll() -> Clear Shared Preferences Succeeded');
       } else {
-        _log(
+        logger.log(
             'SharedPreferencesService -> clearAll() -> Clear Shared Preferences Failed With An Exception');
       }
       return clearingRes;
     } catch (e) {
-      _logUnknownException(
-        operationMode: SharedPrefsOperationMode.clearAll,
-        originalExceptionMessage: e.toString(),
-      );
+      logger.logUnknown(e.toString());
       rethrow;
     }
   }
 
   Future<bool> clearValue({required Enum key}) async {
-    try {
-      if (!keyExists(key: key)) {
-        return false;
-      }
-      bool clearingRes = await _plugin.remove(key.toString());
-      if (clearingRes) {
-        log('SharedPreferencesService -> clearValue() -> Command Succeeded');
-      } else {
-        log('SharedPreferencesService -> clearValue() -> Command Failed (Perhaps the key does not exist in the first place)');
-      }
-      return clearingRes;
-    } catch (e) {
-      log('SharedPreferencesService -> clearValue() -> Clear Shared Preferences Failed With An Exception');
-      rethrow;
-    }
+    return _exceptionHanldingWrapper(
+        operationMode: SharedPrefsOperationMode.clearValue,
+        function: (logger) {
+          return ClearValue(plugin: _plugin, logger: logger).call(key: key);
+        });
   }
 
   bool keyExists({required Enum key}) {
