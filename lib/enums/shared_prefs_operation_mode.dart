@@ -2,7 +2,8 @@ enum SharedPrefsOperationMode {
   read,
   write,
   clearValue,
-  clearAll;
+  clearAll,
+  keyExists;
 
   String get operationModeAsString {
     switch (this) {
@@ -21,6 +22,10 @@ enum SharedPrefsOperationMode {
       case SharedPrefsOperationMode.clearAll:
         {
           return 'Clear-All-Mode';
+        }
+      case SharedPrefsOperationMode.keyExists:
+        {
+          return 'Key-Existance-Checker-Mode';
         }
     }
   }

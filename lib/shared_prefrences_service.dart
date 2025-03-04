@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
 import 'package:shared_prefrences_service/exceptions/invalid_data_type_exception.dart';
@@ -7,6 +5,7 @@ import 'package:shared_prefrences_service/models/shared_preferences_service_sett
 import 'package:shared_prefrences_service/usecases/clear_all.dart';
 import 'package:shared_prefrences_service/usecases/clear_value.dart';
 import 'package:shared_prefrences_service/usecases/get_value.dart';
+import 'package:shared_prefrences_service/usecases/key_exists.dart';
 import 'package:shared_prefrences_service/usecases/logger.dart';
 import 'package:shared_prefrences_service/usecases/set_value.dart';
 
@@ -128,15 +127,11 @@ class SharedPreferencesService {
   }
 
   bool keyExists({required Enum key}) {
-    try {
-      bool keyFound = _plugin.containsKey(key.toString());
-      if (!keyFound) {
-        log('SharedPreferencesService -> keyExists() -> No Existing Item With Key: $key');
-      }
-      return keyFound;
-    } catch (e) {
-      log('SharedPreferencesService -> keyExists() -> Failed With An Exception');
-      return false;
-    }
+    return _exceptionHanldingWrapper(
+      operationMode: SharedPrefsOperationMode.keyExists,
+      function: (logger) {
+        return KeyExists(plugin: _plugin).call(key: key);
+      },
+    );
   }
 }
