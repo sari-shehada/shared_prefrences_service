@@ -1,7 +1,7 @@
 import 'dart:developer' as developer;
 
-import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
-import 'package:shared_prefrences_service/shared_prefrences_service.dart';
+import 'package:shared_preferences_service/enums/shared_prefs_operation_mode.dart';
+import 'package:shared_preferences_service/shared_preferences_service.dart';
 
 class Logger {
   const Logger({

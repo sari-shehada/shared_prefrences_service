@@ -1,4 +1,4 @@
-import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
+import 'package:shared_preferences_service/enums/shared_prefs_operation_mode.dart';
 
 class InvalidDataTypeException {
   InvalidDataTypeException({

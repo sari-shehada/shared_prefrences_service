@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_prefrences_service/shared_prefrences_service.dart';
-import 'package:shared_prefrences_service/usecases/logger.dart';
+import 'package:shared_preferences_service/shared_preferences_service.dart';
+import 'package:shared_preferences_service/usecases/logger.dart';
 
 class ClearValue {
   final SharedPreferences _plugin;

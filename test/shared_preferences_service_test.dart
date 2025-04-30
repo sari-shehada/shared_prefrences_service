@@ -1,8 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_prefrences_service/exceptions/invalid_data_type_exception.dart';
+import 'package:shared_preferences_service/exceptions/invalid_data_type_exception.dart';
 
-import 'package:shared_prefrences_service/shared_prefrences_service.dart';
+import 'package:shared_preferences_service/shared_preferences_service.dart';
 
 void main() async {
   SharedPreferences.setMockInitialValues({});

@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:shared_prefrences_service/usecases/logger.dart';
+import 'package:shared_preferences_service/usecases/logger.dart';
 
 class ClearAll {
   final Logger logger;

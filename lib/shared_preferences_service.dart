@@ -1,13 +1,13 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
-import 'package:shared_prefrences_service/exceptions/invalid_data_type_exception.dart';
-import 'package:shared_prefrences_service/models/shared_preferences_service_settings.dart';
-import 'package:shared_prefrences_service/usecases/clear_all.dart';
-import 'package:shared_prefrences_service/usecases/clear_value.dart';
-import 'package:shared_prefrences_service/usecases/get_value.dart';
-import 'package:shared_prefrences_service/usecases/key_exists.dart';
-import 'package:shared_prefrences_service/usecases/logger.dart';
-import 'package:shared_prefrences_service/usecases/set_value.dart';
+import 'package:shared_preferences_service/enums/shared_prefs_operation_mode.dart';
+import 'package:shared_preferences_service/exceptions/invalid_data_type_exception.dart';
+import 'package:shared_preferences_service/models/shared_preferences_service_settings.dart';
+import 'package:shared_preferences_service/usecases/clear_all.dart';
+import 'package:shared_preferences_service/usecases/clear_value.dart';
+import 'package:shared_preferences_service/usecases/get_value.dart';
+import 'package:shared_preferences_service/usecases/key_exists.dart';
+import 'package:shared_preferences_service/usecases/logger.dart';
+import 'package:shared_preferences_service/usecases/set_value.dart';
 
 class SharedPreferencesService {
   ///Main & only singleton constructor

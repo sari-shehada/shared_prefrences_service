@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:shared_prefrences_service/enums/shared_prefs_operation_mode.dart';
-import 'package:shared_prefrences_service/exceptions/invalid_data_type_exception.dart';
+import 'package:shared_preferences_service/exceptions/invalid_data_type_exception.dart';
+import 'package:shared_preferences_service/enums/shared_prefs_operation_mode.dart';
 
 class GetValue {
   const GetValue({
