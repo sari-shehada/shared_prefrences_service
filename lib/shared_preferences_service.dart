@@ -11,14 +11,14 @@ import 'package:shared_preferences_service/usecases/set_value.dart';
 
 class SharedPreferencesService {
   ///Main & only singleton constructor
-  SharedPreferencesService({
-    required SharedPreferences prefs,
+  SharedPreferencesService._({
+    required SharedPreferences plugin,
     required this.settings,
-  }) : _plugin = prefs;
+  }) : _plugin = plugin;
 
   //Static members
   //
-  ///The instance that exposes the service APIs
+  ///The instance that exposes the API's methods
   static late SharedPreferencesService instance;
 
   ///Used to avoid initializing the service more than once during
@@ -27,12 +27,14 @@ class SharedPreferencesService {
   //
   //End of static members
 
-  //Local memebers
+  //Local members
   //
   ///Used to configure settings for the service like logging in development mode
   SharedPreferencesServiceSettings settings;
 
   ///The primary plugin that powers the package's functionality
+  ///
+  ///See [Shared Preferences Flutter](https://pub.dev/packages/shared_preferences)
   final SharedPreferences _plugin;
   //
   //End of local members
@@ -49,9 +51,9 @@ class SharedPreferencesService {
     SharedPreferencesServiceSettings? settings,
   }) async {
     if (_isInitialized) return instance;
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    instance = SharedPreferencesService(
-      prefs: prefs,
+    SharedPreferences plugin = await SharedPreferences.getInstance();
+    instance = SharedPreferencesService._(
+      plugin: plugin,
       settings: settings ?? SharedPreferencesServiceSettings(),
     );
     _isInitialized = true;
@@ -72,7 +74,7 @@ class SharedPreferencesService {
   ///
   ///Throws `InvalidDataTypeException` on non-supported types
   Future<bool> setValue<T>({required Enum key, required T value}) async {
-    return await _exceptionHanldingWrapper(
+    return await _exceptionHandlingWrapper(
         operationMode: SharedPrefsOperationMode.write,
         function: (logger) async {
           return await SetValue(
@@ -84,7 +86,7 @@ class SharedPreferencesService {
 
   //TODO: Continue documenting
   T? getValue<T>({required Enum key}) {
-    return _exceptionHanldingWrapper(
+    return _exceptionHandlingWrapper(
       operationMode: SharedPrefsOperationMode.read,
       function: (logger) {
         return GetValue(plugin: _plugin).call(key: key);
@@ -92,8 +94,9 @@ class SharedPreferencesService {
     );
   }
 
+  //TODO: Add doc
   Future<bool> clearAll() async {
-    return await _exceptionHanldingWrapper(
+    return await _exceptionHandlingWrapper(
       operationMode: SharedPrefsOperationMode.clearAll,
       function: (logger) async {
         return await ClearAll(logger: logger, plugin: _plugin).call();
@@ -101,16 +104,18 @@ class SharedPreferencesService {
     );
   }
 
+  //TODO: Add doc
   Future<bool> clearValue({required Enum key}) async {
-    return _exceptionHanldingWrapper(
+    return _exceptionHandlingWrapper(
         operationMode: SharedPrefsOperationMode.clearValue,
         function: (logger) {
           return ClearValue(plugin: _plugin, logger: logger).call(key: key);
         });
   }
 
+  //TODO: Add doc
   bool keyExists({required Enum key}) {
-    return _exceptionHanldingWrapper(
+    return _exceptionHandlingWrapper(
       operationMode: SharedPrefsOperationMode.keyExists,
       function: (logger) {
         return KeyExists(plugin: _plugin).call(key: key);
@@ -118,8 +123,8 @@ class SharedPreferencesService {
     );
   }
 
-  //TODO: Document
-  ReturnType _exceptionHanldingWrapper<ReturnType>({
+  //TODO: Add doc
+  ReturnType _exceptionHandlingWrapper<ReturnType>({
     required SharedPrefsOperationMode operationMode,
     required ReturnType Function(Logger logger) function,
   }) {
